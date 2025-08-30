@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useChat } from "@ai-sdk/react";
 import {
   Conversation,
@@ -31,31 +31,52 @@ import {
   tool,
   UIMessage,
 } from "ai";
+import { createGateway } from "@ai-sdk/gateway";
 import { z } from "zod";
+
+// Simple function to add two numbers
+const addTwoNumbers = (a: number, b: number): number => {
+  return a + b;
+};
 
 const Agent = () => {
   const [input, setInput] = useState("");
   const [selectedModel, setSelectedModel] = useState<string>(DEFAULT_MODEL);
   const { apiKey, setApiKey } = useApiKey();
 
-  const { messages, sendMessage, status } = useChat({
+  const apiKeyRef = useRef(apiKey);
+  const selectedModelRef = useRef(selectedModel);
+
+  useEffect(() => {
+    apiKeyRef.current = apiKey;
+  }, [apiKey]);
+
+  useEffect(() => {
+    selectedModelRef.current = selectedModel;
+  }, [selectedModel]);
+
+  const { messages, sendMessage, status, stop } = useChat({
     transport: {
       sendMessages: async ({ messages, abortSignal }) => {
+        const gateway = createGateway({
+          apiKey: apiKeyRef.current,
+        });
+
         const result = streamText({
           stopWhen: [stepCountIs(33)],
-          model: selectedModel,
+          model: gateway(selectedModelRef.current),
           messages: convertToModelMessages(messages),
           tools: {
             calculator: tool({
-              description: "Get the weather in a location",
+              description: "Add two numbers together",
               inputSchema: z.object({
-                location: z
-                  .string()
-                  .describe("The location to get the weather for"),
+                a: z.number().describe("First number"),
+                b: z.number().describe("Second number"),
               }),
-              execute: async ({ location }: { location: string }) => ({
-                location,
-                temperature: 72 + Math.floor(Math.random() * 21) - 10,
+              execute: async ({ a, b }: { a: number; b: number }) => ({
+                a,
+                b,
+                result: addTwoNumbers(a, b),
               }),
             }),
           },
@@ -65,7 +86,6 @@ const Agent = () => {
         return result.toUIMessageStream();
       },
       reconnectToStream: async () => {
-        // Simple implementation - no reconnection logic needed for this basic case
         throw new Error("Reconnection not implemented");
       },
     } satisfies ChatTransport<UIMessage>,
@@ -91,33 +111,27 @@ const Agent = () => {
     }
   };
 
-  useEffect(() => {
-    process.env.AI_GATEWAY_API_KEY = apiKey;
-  }, [apiKey]);
-
   return (
     <div className="flex flex-col w-full h-full min-h-0">
       <div className="flex-1 min-h-0">
         <Conversation className="h-full">
           <ConversationContent className="h-full overflow-y-auto p-4 space-y-4">
             {messages.map((message) => (
-              <div key={message.id}>
-                <Message
-                  from={message.role as "user" | "assistant"}
-                  key={message.id}
-                >
-                  <MessageContent>
-                    {message.parts.map((part, index) =>
-                      renderMessagePart(
-                        part,
-                        message.id,
-                        index,
-                        status === "streaming"
-                      )
-                    )}
-                  </MessageContent>
-                </Message>
-              </div>
+              <Message
+                from={message.role as "user" | "assistant"}
+                key={message.id}
+              >
+                <MessageContent>
+                  {message.parts.map((part, index) =>
+                    renderMessagePart(
+                      part,
+                      message.id,
+                      index,
+                      status === "streaming"
+                    )
+                  )}
+                </MessageContent>
+              </Message>
             ))}
             {status === "submitted" && <Loader />}
           </ConversationContent>
