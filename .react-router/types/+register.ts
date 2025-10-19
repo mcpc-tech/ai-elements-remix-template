@@ -9,4 +9,5 @@ declare module "react-router" {
 type Params = {
   "/": {};
   "/.well-known/appspecific/com.chrome.devtools.json": {};
+  "/acp-demo": {};
 };

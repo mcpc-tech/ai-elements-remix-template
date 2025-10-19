@@ -8,9 +8,11 @@
     "dev": "react-router dev",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc"
+    "typecheck": "react-router typegen && tsc",
+    "acp:server": "node server/acp-websocket-server.js"
   },
   "dependencies": {
+    "@agentclientprotocol/sdk": "^0.4.8",
     "@ai-sdk/gateway": "^1.0.15",
     "@ai-sdk/react": "^2.0.28",
     "@radix-ui/react-avatar": "^1.1.10",
@@ -50,6 +52,7 @@
     "use-mcp": "^0.0.21",
     "use-stick-to-bottom": "^1.1.1",
     "wrangler": "^4.14.1",
+    "ws": "^8.18.3",
     "zod": "^3.25.76"
   },
   "devDependencies": {

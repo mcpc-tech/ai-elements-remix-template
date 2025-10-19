@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@agentclientprotocol/sdk':
+        specifier: ^0.4.8
+        version: 0.4.8
       '@ai-sdk/gateway':
         specifier: ^1.0.15
         version: 1.0.15(zod@3.25.76)
@@ -125,6 +128,9 @@ importers:
       wrangler:
         specifier: ^4.14.1
         version: 4.33.1(@cloudflare/workers-types@4.20250830.0)
+      ws:
+        specifier: ^8.18.3
+        version: 8.18.3
       zod:
         specifier: ^3.25.76
         version: 3.25.76
@@ -185,6 +191,9 @@ importers:
         version: 4.3.2(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.3)(jiti@1.21.7)(yaml@2.7.1))
 
 packages:
+
+  '@agentclientprotocol/sdk@0.4.8':
+    resolution: {integrity: sha512-2hN2CMMWtYVHrUeuapwLu66S2wwOPhq+bLqAryl1cQjKjL5Mzkfq+oxFYFvGdPvBoKpJSxM2pIIQiUH8tGZ3rg==}
 
   '@ai-sdk/gateway@1.0.15':
     resolution: {integrity: sha512-xySXoQ29+KbGuGfmDnABx+O6vc7Gj7qugmj1kGpn0rW0rQNn6UKUuvscKMzWyv1Uv05GyC1vqHq8ZhEOLfXscQ==}
@@ -5130,6 +5139,18 @@ packages:
       utf-8-validate:
         optional: true
 
+  ws@8.18.3:
+    resolution: {integrity: sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   xtend@4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
     engines: {node: '>=0.4'}
@@ -5167,6 +5188,10 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
 snapshots:
+
+  '@agentclientprotocol/sdk@0.4.8':
+    dependencies:
+      zod: 3.25.76
 
   '@ai-sdk/gateway@1.0.15(zod@3.25.76)':
     dependencies:
@@ -10747,6 +10772,8 @@ snapshots:
   wrappy@1.0.2: {}
 
   ws@8.18.0: {}
+
+  ws@8.18.3: {}
 
   xtend@4.0.2: {}
 

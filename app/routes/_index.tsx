@@ -1,8 +1,7 @@
 import type { MetaFunction } from "react-router";
 import { Navbar } from "components/navbar";
 import { ClientOnly } from "remix-utils/client-only";
-
-import Agent from "~/.client/agent";
+import Agent from "../.client/agent";
 
 export const meta: MetaFunction = () => {
   return [
