@@ -8,5 +8,5 @@ declare module "react-router" {
 
 type Params = {
   "/": {};
-  "/api/chat": {};
+  "/.well-known/appspecific/com.chrome.devtools.json": {};
 };

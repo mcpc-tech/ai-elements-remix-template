@@ -102,7 +102,7 @@ importers:
         specifier: ^15.6.6
         version: 15.6.6(react@18.3.1)
       remix-utils:
-        specifier: ^8.0.0
+        specifier: ^8.5.0
         version: 8.5.0(react-router@7.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(zod@3.25.76)
       streamdown:
         specifier: ^1.1.6

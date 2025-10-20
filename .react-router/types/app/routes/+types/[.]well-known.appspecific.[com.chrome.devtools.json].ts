@@ -1,17 +1,17 @@
 // React Router generated types for route:
-// routes/api.chat.ts
+// routes/[.]well-known.appspecific.[com.chrome.devtools.json].tsx
 
 import type * as T from "react-router/route-module"
 
 import type { Info as Parent0 } from "../../+types/root.js"
 
-type Module = typeof import("../api.chat.js")
+type Module = typeof import("../[.]well-known.appspecific.[com.chrome.devtools.json].js")
 
 export type Info = {
   parents: [Parent0],
-  id: "routes/api.chat"
-  file: "routes/api.chat.ts"
-  path: "api/chat"
+  id: "routes/[.]well-known.appspecific.[com.chrome.devtools.json]"
+  file: "routes/[.]well-known.appspecific.[com.chrome.devtools.json].tsx"
+  path: ".well-known/appspecific/com.chrome.devtools.json"
   params: {} & { [key: string]: string | undefined }
   module: Module
   loaderData: T.CreateLoaderData<Module>
