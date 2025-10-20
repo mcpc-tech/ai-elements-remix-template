@@ -16,6 +16,20 @@ import {
 } from "~/components/ai-elements/tool";
 import { CodeBlock } from "~/components/ai-elements/code-block";
 
+// Type guard to check if part is a tool call
+function isToolPart(
+  part: UIMessagePart<Record<string, unknown>, Record<string, UITool>>
+): part is Extract<
+  UIMessagePart<Record<string, unknown>, Record<string, UITool>>,
+  { type: `tool-${string}`; state: string }
+> {
+  return (
+    typeof part.type === "string" &&
+    part.type.startsWith("tool-") &&
+    "state" in part
+  );
+}
+
 export function renderMessagePart(
   part: UIMessagePart<Record<string, unknown>, Record<string, UITool>>,
   messageId: string,
@@ -40,24 +54,41 @@ export function renderMessagePart(
     );
   }
 
-  if (part.type === "tool-calculator") {
-    console.log(part);
+  // Handle tool calls with type starting with "tool-"
+  if (isToolPart(part)) {
+    const toolType = part.type;
+    const hasOutput =
+      part.state === "output-available" || part.state === "output-error";
+
     return (
-      <Tool defaultOpen={true}>
-        <ToolHeader type="tool-calculator" state={part.state} />
+      <Tool key={`${messageId}-${index}`} defaultOpen={hasOutput}>
+        <ToolHeader type={toolType} state={part.state} />
         <ToolContent>
-          <ToolInput input={part.input} />
-          <ToolOutput
-            output={
-              <CodeBlock
-                code={JSON.stringify(part.output, null, 2)}
-                language="json"
-              />
-            }
-            errorText={part.errorText}
-          />
+          {"input" in part && part.input !== undefined && (
+            <ToolInput input={part.input} />
+          )}
+          {hasOutput && (
+            <ToolOutput
+              output={
+                "output" in part && part.output ? (
+                  <CodeBlock
+                    code={JSON.stringify(part.output, null, 2)}
+                    language="json"
+                  />
+                ) : null
+              }
+              errorText={"errorText" in part ? part.errorText : undefined}
+            />
+          )}
         </ToolContent>
       </Tool>
     );
   }
+
+  // Fallback: handle step-start and other unknown types
+  if (part.type === "step-start") {
+    return null;
+  }
+
+  return null;
 }

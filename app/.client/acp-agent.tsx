@@ -22,74 +22,32 @@ import { Loader } from "@/components/ai-elements/loader";
 import { SettingsDialog } from "~/components/settings-dialog";
 import { useApiKey } from "~/hooks/useApiKey";
 import { renderMessagePart } from "~/utils/messageRenderer";
-import { AVAILABLE_MODELS, DEFAULT_MODEL } from "~/constants/models";
-import {
-  ChatTransport,
-  convertToModelMessages,
-  stepCountIs,
-  streamText,
-  tool,
-  google_web_search,
-  UIMessage,
-} from "ai";
-import { createGateway } from "@ai-sdk/gateway";
-import { z } from "zod";
+import { AVAILABLE_AGENTS, DEFAULT_AGENT } from "~/constants/agents";
+import { DefaultChatTransport } from "ai";
 
-// Simple function to add two numbers
-const addTwoNumbers = (a: number, b: number): number => {
-  return a + b;
-};
-
-const Agent = () => {
+const ACPAgent = () => {
   const [input, setInput] = useState("");
-  const [selectedModel, setSelectedModel] = useState<string>(DEFAULT_MODEL);
+  const [selectedAgent, setSelectedAgent] = useState<string>(DEFAULT_AGENT);
   const { apiKey, setApiKey } = useApiKey();
 
+  // Get the selected agent object
+  const currentAgent = AVAILABLE_AGENTS.find(agent => agent.command === selectedAgent) || AVAILABLE_AGENTS[0];
+
   const apiKeyRef = useRef(apiKey);
-  const selectedModelRef = useRef(selectedModel);
+  const selectedAgentRef = useRef(selectedAgent);
 
   useEffect(() => {
     apiKeyRef.current = apiKey;
   }, [apiKey]);
 
   useEffect(() => {
-    selectedModelRef.current = selectedModel;
-  }, [selectedModel]);
+    selectedAgentRef.current = selectedAgent;
+  }, [selectedAgent]);
 
   const { messages, sendMessage, status, stop } = useChat({
-    transport: {
-      sendMessages: async ({ messages, abortSignal }) => {
-        const gateway = createGateway({
-          apiKey: apiKeyRef.current,
-        });
-
-        const result = streamText({
-          model: gateway(selectedModelRef.current),
-          messages: convertToModelMessages(messages),
-          tools: {
-            calculator: tool({
-              description: "Add two numbers together",
-              inputSchema: z.object({
-                a: z.number().describe("First number"),
-                b: z.number().describe("Second number"),
-              }),
-              execute: async ({ a, b }: { a: number; b: number }) => ({
-                a,
-                b,
-                result: addTwoNumbers(a, b),
-              }),
-            }),
-          },
-          toolChoice: "auto",
-          abortSignal,
-        });
-
-        return result.toUIMessageStream();
-      },
-      reconnectToStream: async () => {
-        throw new Error("Reconnection not implemented");
-      },
-    } satisfies ChatTransport<UIMessage>,
+    transport: new DefaultChatTransport({
+      api: "/api/acp/chat",
+    }),
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -100,11 +58,20 @@ const Agent = () => {
         return;
       }
 
+      // Prepare environment variables based on selected agent
+      const envVars: Record<string, string> = {};
+      currentAgent.env.forEach(envConfig => {
+        if (envConfig.key === "GEMINI_API_KEY" || envConfig.key === "ANTHROPIC_API_KEY" || envConfig.key === "OPENAI_API_KEY") {
+          envVars[envConfig.key] = apiKey;
+        }
+      });
+
       sendMessage(
         { text: input },
         {
           body: {
-            model: selectedModel,
+            agent: currentAgent,
+            envVars: envVars,
           },
         }
       );
@@ -150,24 +117,29 @@ const Agent = () => {
           <PromptInputToolbar>
             <PromptInputTools>
               <PromptInputModelSelect
-                onValueChange={setSelectedModel}
-                value={selectedModel}
+                onValueChange={setSelectedAgent}
+                value={selectedAgent}
               >
                 <PromptInputModelSelectTrigger>
                   <PromptInputModelSelectValue />
                 </PromptInputModelSelectTrigger>
                 <PromptInputModelSelectContent>
-                  {AVAILABLE_MODELS.map((modelOption) => (
+                  {AVAILABLE_AGENTS.map((agentOption) => (
                     <PromptInputModelSelectItem
-                      key={modelOption.value}
-                      value={modelOption.value}
+                      key={agentOption.command}
+                      value={agentOption.command}
                     >
-                      {modelOption.name}
+                      {agentOption.name}
                     </PromptInputModelSelectItem>
                   ))}
                 </PromptInputModelSelectContent>
               </PromptInputModelSelect>
-              <SettingsDialog apiKey={apiKey} onApiKeyChange={setApiKey} />
+              <SettingsDialog 
+                apiKey={apiKey} 
+                onApiKeyChange={setApiKey}
+                selectedAgentName={currentAgent.name}
+                requiredKeyName={currentAgent.env[0]?.key || "API Key"}
+              />
             </PromptInputTools>
             <PromptInputSubmit
               onAbort={stop}
@@ -181,4 +153,4 @@ const Agent = () => {
   );
 };
 
-export default Agent;
+export default ACPAgent;

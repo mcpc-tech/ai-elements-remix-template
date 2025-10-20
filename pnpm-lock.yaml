@@ -14,6 +14,9 @@ importers:
       '@ai-sdk/react':
         specifier: ^2.0.28
         version: 2.0.28(react@18.3.1)(zod@3.25.76)
+      '@mcpc-tech/acp-ai-provider':
+        specifier: ^0.1.10
+        version: 0.1.10
       '@radix-ui/react-avatar':
         specifier: ^1.1.10
         version: 1.1.10(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -185,6 +188,9 @@ importers:
         version: 4.3.2(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.3)(jiti@1.21.7)(yaml@2.7.1))
 
 packages:
+
+  '@agentclientprotocol/sdk@0.4.8':
+    resolution: {integrity: sha512-2hN2CMMWtYVHrUeuapwLu66S2wwOPhq+bLqAryl1cQjKjL5Mzkfq+oxFYFvGdPvBoKpJSxM2pIIQiUH8tGZ3rg==}
 
   '@ai-sdk/gateway@1.0.15':
     resolution: {integrity: sha512-xySXoQ29+KbGuGfmDnABx+O6vc7Gj7qugmj1kGpn0rW0rQNn6UKUuvscKMzWyv1Uv05GyC1vqHq8ZhEOLfXscQ==}
@@ -1063,6 +1069,9 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
+
+  '@mcpc-tech/acp-ai-provider@0.1.10':
+    resolution: {integrity: sha512-xyixRTMWjZwHRGgf7YjM9RSmRoR9afauGDEz1gJqQLa+5jQHwgW760zMNxgzqoRFI1VTD62OxoRagEtTunr6Mg==}
 
   '@mermaid-js/parser@0.6.2':
     resolution: {integrity: sha512-+PO02uGF6L6Cs0Bw8RpGhikVvMWEysfAyl27qTlroUB8jSWr1lL0Sf6zi78ZxlSnmgSY2AMMKVgghnN9jTtwkQ==}
@@ -5168,6 +5177,10 @@ packages:
 
 snapshots:
 
+  '@agentclientprotocol/sdk@0.4.8':
+    dependencies:
+      zod: 3.25.76
+
   '@ai-sdk/gateway@1.0.15(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
@@ -5860,6 +5873,11 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
+
+  '@mcpc-tech/acp-ai-provider@0.1.10':
+    dependencies:
+      '@agentclientprotocol/sdk': 0.4.8
+      '@ai-sdk/provider': 2.0.0
 
   '@mermaid-js/parser@0.6.2':
     dependencies:

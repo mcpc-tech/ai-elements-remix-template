@@ -1,14 +1,23 @@
-"use client";
-
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router";
 import { ThemeSwitch } from "./theme-switch";
 
 export function Navbar() {
   const [isClient, setIsClient] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // Determine SDK mode based on current route
+  const getSdkMode = () => {
+    if (location.pathname === "/acp") {
+      return "ACP AI SDK";
+    }
+    // Default route (/) uses the Client AI SDK
+    return "Client AI SDK";
+  };
 
   if (!isClient) {
     return null;
@@ -31,7 +40,7 @@ export function Navbar() {
 
         {/* Right Side */}
         <div className="flex items-center gap-3">
-          <span className="text-sm text-muted-foreground">Client Mode</span>
+          <span className="text-sm text-muted-foreground">{getSdkMode()}</span>
           <ThemeSwitch />
         </div>
       </div>

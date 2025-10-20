@@ -19,11 +19,15 @@ import { Settings } from "lucide-react";
 interface SettingsDialogProps {
   apiKey: string;
   onApiKeyChange: (apiKey: string) => void;
+  selectedAgentName?: string;
+  requiredKeyName?: string;
 }
 
 export const SettingsDialog: React.FC<SettingsDialogProps> = ({
   apiKey,
   onApiKeyChange,
+  selectedAgentName = "Agent",
+  requiredKeyName = "API Key",
 }) => {
   const [tempApiKey, setTempApiKey] = useState(apiKey);
   const [isOpen, setIsOpen] = useState(false);
@@ -65,31 +69,23 @@ export const SettingsDialog: React.FC<SettingsDialogProps> = ({
           </TooltipContent>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader className="space-y-3">
-          <DialogTitle>Settings</DialogTitle>
+          <DialogTitle>Settings - {selectedAgentName}</DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground leading-relaxed">
-            Configure your AI Gateway API Key to use the chat functionality.{" "}
-            <a 
-              href="https://vercel.com/docs/ai-gateway" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-primary underline hover:no-underline"
-            >
-              Learn more about AI Gateway
-            </a>
+            Configure your {requiredKeyName} to use the {selectedAgentName} functionality.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="apiKey" className="text-right font-medium">
-              API Key
+          <div className="space-y-2">
+            <Label htmlFor="apiKey" className="text-sm font-medium">
+              {requiredKeyName}
             </Label>
             <Input
               id="apiKey"
               type="password"
               value={tempApiKey}
               onChange={(e) => setTempApiKey(e.target.value)}
-              className="col-span-3"
-              placeholder="Enter your API Key"
+              className="w-full"
+              placeholder={`Enter your ${requiredKeyName}`}
             />
           </div>
         </div>
