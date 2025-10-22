@@ -27,7 +27,7 @@ export const SettingsDialog: React.FC<SettingsDialogProps> = ({
   apiKey,
   onApiKeyChange,
   selectedAgentName = "Agent",
-  requiredKeyName = "API Key",
+  requiredKeyName = "API_KEY",
 }) => {
   const [tempApiKey, setTempApiKey] = useState(apiKey);
   const [isOpen, setIsOpen] = useState(false);

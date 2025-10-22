@@ -21,17 +21,23 @@ import {
 import { Loader } from "@/components/ai-elements/loader";
 import { SettingsDialog } from "~/components/settings-dialog";
 import { useApiKey } from "~/hooks/useApiKey";
+import { useAgent } from "~/hooks/useAgent";
 import { renderMessagePart } from "~/utils/messageRenderer";
 import { AVAILABLE_AGENTS, DEFAULT_AGENT } from "~/constants/agents";
 import { DefaultChatTransport } from "ai";
 
 const ACPAgent = () => {
   const [input, setInput] = useState("");
-  const [selectedAgent, setSelectedAgent] = useState<string>(DEFAULT_AGENT);
+  // Persist selected agent using useAgent hook
+  const { agent: selectedAgent, setAgent: setSelectedAgent } = useAgent(
+    DEFAULT_AGENT
+  );
   const { apiKey, setApiKey } = useApiKey();
 
   // Get the selected agent object
-  const currentAgent = AVAILABLE_AGENTS.find(agent => agent.command === selectedAgent) || AVAILABLE_AGENTS[0];
+  const currentAgent =
+    AVAILABLE_AGENTS.find((agent) => agent.command === selectedAgent) ||
+    AVAILABLE_AGENTS[0];
 
   const apiKeyRef = useRef(apiKey);
   const selectedAgentRef = useRef(selectedAgent);
@@ -60,10 +66,8 @@ const ACPAgent = () => {
 
       // Prepare environment variables based on selected agent
       const envVars: Record<string, string> = {};
-      currentAgent.env.forEach(envConfig => {
-        if (envConfig.key === "GEMINI_API_KEY" || envConfig.key === "ANTHROPIC_API_KEY" || envConfig.key === "OPENAI_API_KEY") {
-          envVars[envConfig.key] = apiKey;
-        }
+      currentAgent.env.forEach((envConfig) => {
+        envVars[envConfig.key] = apiKey;
       });
 
       sendMessage(
@@ -134,11 +138,11 @@ const ACPAgent = () => {
                   ))}
                 </PromptInputModelSelectContent>
               </PromptInputModelSelect>
-              <SettingsDialog 
-                apiKey={apiKey} 
+              <SettingsDialog
+                apiKey={apiKey}
                 onApiKeyChange={setApiKey}
                 selectedAgentName={currentAgent.name}
-                requiredKeyName={currentAgent.env[0]?.key || "API Key"}
+                requiredKeyName={currentAgent.env[0]?.key}
               />
             </PromptInputTools>
             <PromptInputSubmit

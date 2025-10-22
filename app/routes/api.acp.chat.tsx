@@ -5,24 +5,17 @@ import { createACPProvider } from "@mcpc-tech/acp-ai-provider";
 export async function action({ request }: ActionFunctionArgs) {
   const { messages, agent, envVars } = await request.json();
 
-  // Use the agent command directly
-  const command = agent.command;
+  console.log("ACP Agent Command:", agent);
 
-  // Set environment variables temporarily for the ACP process
-  if (envVars) {
-    Object.entries(envVars).forEach(([key, value]) => {
-      process.env[key] = value as string;
-    });
-  }
-
-  // Create ACP provider
   const provider = createACPProvider({
-    command,
-    args: ["--experimental-acp"],
+    command: agent.command,
+    args: agent.args,
+    env: envVars,
     session: {
-      cwd: "/Users/beet/github-repo/ai-elements-remix-template/",
+      cwd: process.cwd(),
       mcpServers: [],
     },
+    authMethodId: "custom-model-provider",
   });
 
   const result = streamText({
@@ -31,6 +24,8 @@ export async function action({ request }: ActionFunctionArgs) {
     onError: (error) => {
       console.error("Error occurred while streaming text:", error);
     },
+    // @ts-expect-error - t
+    tools: provider.tools,
   });
 
   return result.toUIMessageStreamResponse({

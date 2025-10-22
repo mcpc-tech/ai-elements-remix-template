@@ -1,6 +1,7 @@
 export interface Agent {
   name: string;
   command: string;
+  args?: string[];
   env: [
     {
       key: string;
@@ -13,6 +14,7 @@ export const AVAILABLE_AGENTS: Agent[] = [
   {
     name: "Gemini CLI",
     command: "gemini",
+    args: ["--experimental-acp"],
     env: [{ key: "GEMINI_API_KEY", required: true }],
   },
   {
@@ -23,7 +25,7 @@ export const AVAILABLE_AGENTS: Agent[] = [
   {
     name: "Codex CLI",
     command: "codex-acp",
-    env: [{ key: "OPENAI_API_KEY", required: true }],
+    env: [{ key: "AI_GATEWAY_API_KEY", required: true }],
   },
 ];
 

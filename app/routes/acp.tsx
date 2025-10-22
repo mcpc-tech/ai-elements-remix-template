@@ -3,6 +3,7 @@ import { Navbar } from "components/navbar";
 import { ClientOnly } from "remix-utils/client-only";
 
 import ACPAgent from "~/.client/acp-agent";
+import { Loader } from "~/components/ai-elements/loader";
 
 export const meta: MetaFunction = () => {
   return [
@@ -17,7 +18,13 @@ export default function ACP() {
       <Navbar />
       <main className="flex-1 flex flex-col">
         <div className="flex-1 container mx-auto max-w-7xl px-6 flex flex-col">
-          <ClientOnly fallback={<div>Loading...</div>}>
+          <ClientOnly
+            fallback={
+              <div className="flex-1 flex items-center justify-center">
+                <Loader />
+              </div>
+            }
+          >
             {() => <ACPAgent />}
           </ClientOnly>
         </div>

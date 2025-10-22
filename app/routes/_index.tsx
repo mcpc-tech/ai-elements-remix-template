@@ -1,6 +1,7 @@
 import type { MetaFunction } from "react-router";
 import { Navbar } from "components/navbar";
 import { ClientOnly } from "remix-utils/client-only";
+import { Loader } from "~/components/ai-elements/loader";
 
 import Agent from "~/.client/agent";
 
@@ -17,7 +18,13 @@ export default function Index() {
       <Navbar />
       <main className="flex-1 flex flex-col">
         <div className="flex-1 container mx-auto max-w-7xl px-6 flex flex-col">
-          <ClientOnly fallback={<div>Loading...</div>}>
+          <ClientOnly
+            fallback={
+              <div className="flex-1 flex items-center justify-center">
+                <Loader />
+              </div>
+            }
+          >
             {() => <Agent />}
           </ClientOnly>
         </div>

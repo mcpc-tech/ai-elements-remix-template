@@ -56,7 +56,7 @@ export function renderMessagePart(
 
   // Handle tool calls with type starting with "tool-"
   if (isToolPart(part)) {
-    const toolType = part.type;
+    const toolType = part.input.toolName;
     const hasOutput =
       part.state === "output-available" || part.state === "output-error";
 
