@@ -36,12 +36,10 @@ export function renderMessagePart(
   index: number,
   isStreaming: boolean
 ) {
-  console.log(part);
+  
   if (part.type === "text" && part.text) {
     return <Response key={`${messageId}-${index}`}>{part.text}</Response>;
   }
-
-  console.log(part);
 
   if (part.type === "reasoning") {
     return (

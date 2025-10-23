@@ -20,6 +20,8 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const result = streamText({
     model: provider.languageModel(),
+    // Ensure raw chunks like agent plan are included for streaming
+    includeRawChunks: true,
     messages: convertToModelMessages(messages),
     onChunk: (chunk) => {
       console.log("Streamed chunk:", chunk);
