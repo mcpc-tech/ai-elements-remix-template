@@ -12,10 +12,10 @@ export async function action({ request }: ActionFunctionArgs) {
     args: agent.args,
     env: envVars,
     session: {
-      cwd: '/tmp',
+      cwd: process.cwd(),
       mcpServers: [],
     },
-    authMethodId: 'oauth-personal',
+    authMethodId: agent.authMethodId
   });
 
   const result = streamText({
@@ -27,7 +27,6 @@ export async function action({ request }: ActionFunctionArgs) {
     onError: (error) => {
       console.error("Error occurred while streaming text:", error);
     },
-    // @ts-expect-error - t
     tools: provider.tools,
   });
 
