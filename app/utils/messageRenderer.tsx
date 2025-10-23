@@ -41,6 +41,8 @@ export function renderMessagePart(
     return <Response key={`${messageId}-${index}`}>{part.text}</Response>;
   }
 
+  console.log(part);
+
   if (part.type === "reasoning") {
     return (
       <Reasoning

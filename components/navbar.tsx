@@ -13,10 +13,10 @@ export function Navbar() {
   // Determine SDK mode based on current route
   const getSdkMode = () => {
     if (location.pathname === "/acp") {
-      return "ACP AI SDK";
+      return "ACP AI SDK Provider Example";
     }
     // Default route (/) uses the Client AI SDK
-    return "Client AI SDK";
+    return "Client AI SDK & Gateway Example";
   };
 
   if (!isClient) {
@@ -28,13 +28,13 @@ export function Navbar() {
       <div className="container mx-auto max-w-7xl flex h-16 items-center justify-between px-6">
         {/* Brand */}
         <div className="flex items-center gap-3">
-          <a href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 rounded bg-blue-600 flex items-center justify-center">
+          <a
+            href="/"
+            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+          >
+            <div className="w-6 h-6 rounded-lg bg-blue-400 flex items-center justify-center">
               <span className="text-white font-bold text-sm">AI</span>
             </div>
-            <span className="font-bold text-lg">
-              AI Elements Demo
-            </span>
           </a>
         </div>
 
