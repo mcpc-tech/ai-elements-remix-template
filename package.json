@@ -13,7 +13,7 @@
   "dependencies": {
     "@ai-sdk/gateway": "^1.0.15",
     "@ai-sdk/react": "^2.0.28",
-    "@mcpc-tech/acp-ai-provider": "^0.1.13",
+    "@mcpc-tech/acp-ai-provider": "^0.1.14",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-collapsible": "^1.1.12",
     "@radix-ui/react-dialog": "^1.1.15",

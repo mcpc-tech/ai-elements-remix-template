@@ -2,12 +2,12 @@ export interface Agent {
   name: string;
   command: string;
   args?: string[];
-  env: [
+  env: Array<
     {
       key: string;
       required: boolean;
     }
-  ];
+  >;
   authMethodId?: string;
 }
 
@@ -22,7 +22,10 @@ export const AVAILABLE_AGENTS: Agent[] = [
   {
     name: "Claude Code",
     command: "claude-code-acp",
-    env: [{ key: "ANTHROPIC_API_KEY", required: true }],
+    env: [{ key: "ANTHROPIC_API_KEY", required: true }, {
+      key: "ANTHROPIC_BASE_URL",
+      required: false
+    }],
   },
   {
     name: "Codex CLI",

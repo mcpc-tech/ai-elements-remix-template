@@ -15,8 +15,8 @@ importers:
         specifier: ^2.0.28
         version: 2.0.76(react@18.3.1)(zod@3.25.76)
       '@mcpc-tech/acp-ai-provider':
-        specifier: ^0.1.13
-        version: 0.1.13(zod@3.25.76)
+        specifier: ^0.1.14
+        version: 0.1.14(zod@3.25.76)
       '@radix-ui/react-avatar':
         specifier: ^1.1.10
         version: 1.1.10(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -930,8 +930,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
 
-  '@mcpc-tech/acp-ai-provider@0.1.13':
-    resolution: {integrity: sha512-BWX0GuptaOuhfgIVTYT1JLfJJOsRbul4WXcdUFAJBJPvOE8uXz4EeRx0RbDxZdZblglOwhn+TJMR4Ecs9I2Q9A==}
+  '@mcpc-tech/acp-ai-provider@0.1.14':
+    resolution: {integrity: sha512-+LQmAb/EXeBgN9VNklFZN8o3XbMVs25k5dqcCOTBzqhWaJvPU0SXdaLSkKkp8injNeedZ9GwHV5kik7XHGtPXw==}
 
   '@mermaid-js/parser@0.6.3':
     resolution: {integrity: sha512-lnjOhe7zyHjc+If7yT4zoedx2vo4sHaTmtkl1+or8BRTnCtDmcTpAjpzDSfCZrshM5bCoz0GyidzadJAH1xobA==}
@@ -5668,7 +5668,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@mcpc-tech/acp-ai-provider@0.1.13(zod@3.25.76)':
+  '@mcpc-tech/acp-ai-provider@0.1.14(zod@3.25.76)':
     dependencies:
       '@agentclientprotocol/sdk': 0.4.9
       '@ai-sdk/provider': 2.0.0

@@ -20,7 +20,6 @@ import {
 } from "@/components/ai-elements/prompt-input";
 import { Loader } from "@/components/ai-elements/loader";
 import { SettingsDialog } from "~/components/settings-dialog";
-import { useApiKey } from "~/hooks/useApiKey";
 import { renderMessagePart } from "~/utils/messageRenderer";
 import { AVAILABLE_MODELS, DEFAULT_MODEL } from "~/constants/models";
 import {
@@ -29,7 +28,6 @@ import {
   stepCountIs,
   streamText,
   tool,
-  google_web_search,
   UIMessage,
 } from "ai";
 import { createGateway } from "@ai-sdk/gateway";
@@ -43,14 +41,11 @@ const addTwoNumbers = (a: number, b: number): number => {
 const Agent = () => {
   const [input, setInput] = useState("");
   const [selectedModel, setSelectedModel] = useState<string>(DEFAULT_MODEL);
-  const { apiKey, setApiKey } = useApiKey();
-
-  const apiKeyRef = useRef(apiKey);
+  // useApiKey removed - generic agent doesn't require a single global API key here
+  const apiKeyRef = useRef("");
   const selectedModelRef = useRef(selectedModel);
 
-  useEffect(() => {
-    apiKeyRef.current = apiKey;
-  }, [apiKey]);
+  // no apiKey to sync
 
   useEffect(() => {
     selectedModelRef.current = selectedModel;
@@ -95,11 +90,6 @@ const Agent = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
-      if (!apiKey.trim()) {
-        alert("Please set your API Key first");
-        return;
-      }
-
       sendMessage(
         { text: input },
         {
@@ -167,11 +157,11 @@ const Agent = () => {
                   ))}
                 </PromptInputModelSelectContent>
               </PromptInputModelSelect>
-              <SettingsDialog apiKey={apiKey} onApiKeyChange={setApiKey} />
+              <SettingsDialog />
             </PromptInputTools>
             <PromptInputSubmit
               onAbort={stop}
-              disabled={!input || !apiKey.trim()}
+              disabled={!input}
               status={status}
             />
           </PromptInputToolbar>

@@ -20,8 +20,8 @@ import {
 } from "@/components/ai-elements/prompt-input";
 import { Loader } from "@/components/ai-elements/loader";
 import { SettingsDialog } from "~/components/settings-dialog";
-import { useApiKey } from "~/hooks/useApiKey";
 import { useAgent } from "~/hooks/useAgent";
+import { useAgentEnv } from "~/hooks/useAgentEnv";
 import { renderMessagePart } from "~/utils/messageRenderer";
 import { AVAILABLE_AGENTS, DEFAULT_AGENT } from "~/constants/agents";
 import { DefaultChatTransport } from "ai";
@@ -32,19 +32,18 @@ const ACPAgent = () => {
   const { agent: selectedAgent, setAgent: setSelectedAgent } = useAgent(
     DEFAULT_AGENT
   );
-  const { apiKey, setApiKey } = useApiKey();
+  // no global apiKey: use per-agent env vars instead
 
   // Get the selected agent object
   const currentAgent =
     AVAILABLE_AGENTS.find((agent) => agent.command === selectedAgent) ||
     AVAILABLE_AGENTS[0];
 
-  const apiKeyRef = useRef(apiKey);
-  const selectedAgentRef = useRef(selectedAgent);
+  // Prepare agent-scoped env state for the settings dialog
+  const requiredKeys = currentAgent.env.map((e) => e.key);
+  const { envVars, setEnvVar } = useAgentEnv(currentAgent.command, requiredKeys);
 
-  useEffect(() => {
-    apiKeyRef.current = apiKey;
-  }, [apiKey]);
+  const selectedAgentRef = useRef(selectedAgent);
 
   useEffect(() => {
     selectedAgentRef.current = selectedAgent;
@@ -59,24 +58,26 @@ const ACPAgent = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
-      if (!apiKey.trim()) {
-        alert("Please set your API Key first");
-        return;
-      }
+        // Ensure all required env keys are present
+        const missing = requiredKeys.filter((k) => !(envVars[k] ?? "").trim());
+        if (missing.length) {
+          alert(`Please set required keys: ${missing.join(", ")}`);
+          return;
+        }
 
-      // Prepare environment variables based on selected agent
-      const envVars: Record<string, string> = {};
-      currentAgent.env.forEach((envConfig) => {
-        envVars[envConfig.key] = apiKey;
-      });
+        // Prepare environment variables based on selected agent
+        const preparedEnv: Record<string, string> = {};
+        currentAgent.env.forEach((envConfig) => {
+          preparedEnv[envConfig.key] = envVars[envConfig.key] ?? "";
+        });
 
       sendMessage(
         { text: input },
         {
-          body: {
-            agent: currentAgent,
-            envVars: envVars,
-          },
+            body: {
+              agent: currentAgent,
+              envVars: preparedEnv,
+            },
         }
       );
       setInput("");
@@ -139,15 +140,18 @@ const ACPAgent = () => {
                 </PromptInputModelSelectContent>
               </PromptInputModelSelect>
               <SettingsDialog
-                apiKey={apiKey}
-                onApiKeyChange={setApiKey}
                 selectedAgentName={currentAgent.name}
-                requiredKeyName={currentAgent.env[0]?.key}
+                requiredKeyNames={requiredKeys}
+                values={envVars}
+                onChange={(k, v) => setEnvVar(k, v)}
               />
             </PromptInputTools>
             <PromptInputSubmit
               onAbort={stop}
-              disabled={!input || !apiKey.trim()}
+              disabled={
+                !input ||
+                requiredKeys.some((k) => !(envVars[k] ?? "").trim())
+              }
               status={status}
             />
           </PromptInputToolbar>
