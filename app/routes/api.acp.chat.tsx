@@ -12,15 +12,18 @@ export async function action({ request }: ActionFunctionArgs) {
     args: agent.args,
     env: envVars,
     session: {
-      cwd: process.cwd(),
+      cwd: '/tmp',
       mcpServers: [],
     },
-    authMethodId: "custom-model-provider",
+    authMethodId: 'oauth-personal',
   });
 
   const result = streamText({
     model: provider.languageModel(),
     messages: convertToModelMessages(messages),
+    onChunk: (chunk) => {
+      console.log("Streamed chunk:", chunk);
+    },
     onError: (error) => {
       console.error("Error occurred while streaming text:", error);
     },

@@ -8,6 +8,7 @@ export interface Agent {
       required: boolean;
     }
   ];
+  authMethodId?: string;
 }
 
 export const AVAILABLE_AGENTS: Agent[] = [
@@ -16,6 +17,7 @@ export const AVAILABLE_AGENTS: Agent[] = [
     command: "gemini",
     args: ["--experimental-acp"],
     env: [{ key: "GEMINI_API_KEY", required: true }],
+    authMethodId: 'gemini-api-key'
   },
   {
     name: "Claude Code",
@@ -26,6 +28,7 @@ export const AVAILABLE_AGENTS: Agent[] = [
     name: "Codex CLI",
     command: "codex-acp",
     env: [{ key: "AI_GATEWAY_API_KEY", required: true }],
+    authMethodId: "custom-model-provider",
   },
 ];
 
