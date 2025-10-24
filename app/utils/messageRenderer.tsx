@@ -22,8 +22,9 @@ import {
   PlanContent,
   PlanTrigger,
 } from "components/ai-elements/plan";
+import { PlanEntry } from "@agentclientprotocol/sdk";
+import { ProviderAgentDynamicToolInput } from "@mcpc-tech/acp-ai-provider";
 
-// Check if part is a tool call
 function isToolPart(
   part: unknown
 ): part is Record<string, unknown> & { type: string; state: string } {
@@ -58,14 +59,14 @@ export function renderMessagePart(
   }
 
   // Render plan from message metadata
-  const plan = metadata?.plan as Array<Record<string, unknown>> | undefined;
+  const plan = metadata?.plan as Array<PlanEntry> | undefined;
   if (plan && index === 0) {
     return (
       <div key={`${messageId}-plan`} className="w-full">
         <Plan defaultOpen isStreaming={isStreaming}>
           <PlanHeader className="flex flex-row items-center">
-            <h1 className="text-lg">Agent Plan</h1>
-            <PlanTrigger />
+            <h1 className="text-base">Agent Plan</h1>
+            <PlanTrigger className="mb-2" />
           </PlanHeader>
           <PlanContent>
             <ul className="space-y-2">
@@ -111,7 +112,8 @@ export function renderMessagePart(
 
   // Handle tool calls with type starting with "tool-"
   if (isToolPart(part)) {
-    const toolType = part.type as `tool-${string}`;
+    const toolInput = part.input as ProviderAgentDynamicToolInput;
+    const toolType = toolInput.toolName as `tool-${string}`;
     const hasOutput =
       part.state === "output-available" || part.state === "output-error";
 
@@ -136,11 +138,6 @@ export function renderMessagePart(
         </ToolContent>
       </Tool>
     );
-  }
-
-  // Fallback: handle step-start and other unknown types
-  if (part.type === "step-start") {
-    return null;
   }
 
   return null;

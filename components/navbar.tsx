@@ -32,7 +32,7 @@ export function Navbar() {
             href="/"
             className="flex items-center gap-3 hover:opacity-80 transition-opacity"
           >
-            <div className="w-6 h-6 rounded-lg bg-blue-400 flex items-center justify-center">
+            <div className="w-6 h-6 rounded-lg bg-slate-500 flex items-center justify-center">
               <span className="text-white font-bold text-sm">AI</span>
             </div>
           </a>

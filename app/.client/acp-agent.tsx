@@ -5,7 +5,11 @@ import {
   ConversationContent,
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
-import { Message, MessageContent } from "@/components/ai-elements/message";
+import {
+  Message,
+  MessageAvatar,
+  MessageContent,
+} from "@/components/ai-elements/message";
 import {
   PromptInput,
   PromptInputModelSelect,
@@ -29,9 +33,8 @@ import { DefaultChatTransport } from "ai";
 const ACPAgent = () => {
   const [input, setInput] = useState("");
   // Persist selected agent using useAgent hook
-  const { agent: selectedAgent, setAgent: setSelectedAgent } = useAgent(
-    DEFAULT_AGENT
-  );
+  const { agent: selectedAgent, setAgent: setSelectedAgent } =
+    useAgent(DEFAULT_AGENT);
   // no global apiKey: use per-agent env vars instead
 
   // Get the selected agent object
@@ -41,7 +44,10 @@ const ACPAgent = () => {
 
   // Prepare agent-scoped env state for the settings dialog
   const requiredKeys = currentAgent.env.map((e) => e.key);
-  const { envVars, setEnvVar } = useAgentEnv(currentAgent.command, requiredKeys);
+  const { envVars, setEnvVar } = useAgentEnv(
+    currentAgent.command,
+    requiredKeys
+  );
 
   const selectedAgentRef = useRef(selectedAgent);
 
@@ -58,26 +64,26 @@ const ACPAgent = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
-        // Ensure all required env keys are present
-        const missing = requiredKeys.filter((k) => !(envVars[k] ?? "").trim());
-        if (missing.length) {
-          alert(`Please set required keys: ${missing.join(", ")}`);
-          return;
-        }
+      // Ensure all required env keys are present
+      const missing = requiredKeys.filter((k) => !(envVars[k] ?? "").trim());
+      if (missing.length) {
+        alert(`Please set required keys: ${missing.join(", ")}`);
+        return;
+      }
 
-        // Prepare environment variables based on selected agent
-        const preparedEnv: Record<string, string> = {};
-        currentAgent.env.forEach((envConfig) => {
-          preparedEnv[envConfig.key] = envVars[envConfig.key] ?? "";
-        });
+      // Prepare environment variables based on selected agent
+      const preparedEnv: Record<string, string> = {};
+      currentAgent.env.forEach((envConfig) => {
+        preparedEnv[envConfig.key] = envVars[envConfig.key] ?? "";
+      });
 
       sendMessage(
         { text: input },
         {
-            body: {
-              agent: currentAgent,
-              envVars: preparedEnv,
-            },
+          body: {
+            agent: currentAgent,
+            envVars: preparedEnv,
+          },
         }
       );
       setInput("");
@@ -91,6 +97,7 @@ const ACPAgent = () => {
           <ConversationContent className="h-full overflow-y-auto p-4 space-y-4">
             {messages.map((message) => (
               <Message
+                className="items-start"
                 from={message.role as "user" | "assistant"}
                 key={message.id}
               >
@@ -105,6 +112,12 @@ const ACPAgent = () => {
                     )
                   )}
                 </MessageContent>
+                {message.role === "assistant" && (
+                  <MessageAvatar
+                    name={currentAgent.command}
+                    src={currentAgent.meta?.icon ?? ""}
+                  />
+                )}
               </Message>
             ))}
             {status === "submitted" && <Loader />}
@@ -150,8 +163,7 @@ const ACPAgent = () => {
             <PromptInputSubmit
               onAbort={stop}
               disabled={
-                !input ||
-                requiredKeys.some((k) => !(envVars[k] ?? "").trim())
+                !input || requiredKeys.some((k) => !(envVars[k] ?? "").trim())
               }
               status={status}
             />
