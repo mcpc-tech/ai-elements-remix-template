@@ -15,6 +15,9 @@ A modern chat interface template built with AI SDK and customizable UI component
 
 - 🤖 **AI Chat Interface** - Complete chat UI with streaming responses
 - 🔗 **ACP Support** - Connect to any Agent Client Protocol compatible agent like Gemini CLI, Claude Code, or Codex CLI
+
+  ![acp demo](./docs/acp-demo.gif)
+
 - 🎨 **Beautiful Components** - Pre-built AI Elements components
 - 🔧 **Configurable** - Easy to customize and extend
 - 🌙 **Dark Mode** - Built-in theme switching
