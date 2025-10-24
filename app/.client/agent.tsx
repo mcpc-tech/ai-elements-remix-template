@@ -118,7 +118,8 @@ const Agent = () => {
                       part,
                       message.id,
                       index,
-                      status === "streaming"
+                      status === "streaming",
+                      message.metadata as Record<string, unknown> | undefined
                     )
                   )}
                 </MessageContent>

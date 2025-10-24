@@ -15,18 +15,21 @@ import {
   ToolOutput,
 } from "~/components/ai-elements/tool";
 import { CodeBlock } from "~/components/ai-elements/code-block";
+import {
+  Plan,
+  PlanHeader,
+  // PlanTitle,
+  PlanContent,
+  PlanTrigger,
+} from "components/ai-elements/plan";
 
-// Type guard to check if part is a tool call
+// Check if part is a tool call
 function isToolPart(
-  part: UIMessagePart<Record<string, unknown>, Record<string, UITool>>
-): part is Extract<
-  UIMessagePart<Record<string, unknown>, Record<string, UITool>>,
-  { type: `tool-${string}`; state: string }
-> {
+  part: unknown
+): part is Record<string, unknown> & { type: string; state: string } {
+  const p = part as Record<string, unknown>;
   return (
-    typeof part.type === "string" &&
-    part.type.startsWith("tool-") &&
-    "state" in part
+    typeof p.type === "string" && p.type.startsWith("tool-") && "state" in p
   );
 }
 
@@ -34,9 +37,9 @@ export function renderMessagePart(
   part: UIMessagePart<Record<string, unknown>, Record<string, UITool>>,
   messageId: string,
   index: number,
-  isStreaming: boolean
+  isStreaming: boolean,
+  metadata?: Record<string, unknown>
 ) {
-  
   if (part.type === "text" && part.text) {
     return <Response key={`${messageId}-${index}`}>{part.text}</Response>;
   }
@@ -54,9 +57,61 @@ export function renderMessagePart(
     );
   }
 
+  // Render plan from message metadata
+  const plan = metadata?.plan as Array<Record<string, unknown>> | undefined;
+  if (plan && index === 0) {
+    return (
+      <div key={`${messageId}-plan`} className="w-full">
+        <Plan defaultOpen isStreaming={isStreaming}>
+          <PlanHeader className="flex flex-row items-center">
+            <h1 className="text-lg">Agent Plan</h1>
+            <PlanTrigger />
+          </PlanHeader>
+          <PlanContent>
+            <ul className="space-y-2">
+              {plan.map((item, i) => {
+                const content =
+                  (item.content as string) || JSON.stringify(item);
+                const priority = item.priority as string | undefined;
+                const status = item.status as string | undefined;
+
+                return (
+                  <li
+                    key={`plan-${i}`}
+                    className="flex items-start justify-between gap-3"
+                  >
+                    <div className="flex-1">
+                      <div
+                        className={`text-sm ${status === "done" ? "line-through text-slate-400" : "text-slate-900 dark:text-slate-100"}`}
+                      >
+                        {content}
+                      </div>
+                      {priority && (
+                        <div className="mt-1 text-xs text-slate-500">
+                          Priority: {priority}
+                        </div>
+                      )}
+                    </div>
+                    <div className="shrink-0 text-xs">
+                      <span
+                        className={`px-2 py-1 rounded-full font-medium text-[10px] uppercase tracking-wide ${status === "pending" ? "bg-yellow-100 text-yellow-800" : "bg-green-100 text-green-800"}`}
+                      >
+                        {status ?? "pending"}
+                      </span>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </PlanContent>
+        </Plan>
+      </div>
+    );
+  }
+
   // Handle tool calls with type starting with "tool-"
   if (isToolPart(part)) {
-    const toolType = (part.input as { toolName: `tool-${string}` }).toolName;
+    const toolType = part.type as `tool-${string}`;
     const hasOutput =
       part.state === "output-available" || part.state === "output-error";
 
@@ -64,20 +119,18 @@ export function renderMessagePart(
       <Tool key={`${messageId}-${index}`} defaultOpen={hasOutput}>
         <ToolHeader type={toolType} state={part.state} />
         <ToolContent>
-          {"input" in part && part.input !== undefined && (
-            <ToolInput input={part.input} />
-          )}
+          {part.input !== undefined && <ToolInput input={part.input} />}
           {hasOutput && (
             <ToolOutput
               output={
-                "output" in part && part.output ? (
+                part.output ? (
                   <CodeBlock
                     code={JSON.stringify(part.output, null, 2)}
                     language="json"
                   />
                 ) : null
               }
-              errorText={"errorText" in part ? part.errorText : undefined}
+              errorText={part.errorText as string | undefined}
             />
           )}
         </ToolContent>
