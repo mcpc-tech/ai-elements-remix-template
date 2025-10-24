@@ -5,7 +5,7 @@ A modern chat interface template built with AI SDK and customizable UI component
 ## Tech Stack
 
 - **React Router V7** - Full-stack React framework
-- **AI SDK** - Vercel AI SDK for chat functionality  
+- **AI SDK** - Vercel AI SDK for chat functionality
 - **shadcn/ui** - Beautiful UI components built on Radix UI
 - **Tailwind CSS** - Utility-first CSS framework
 - **TypeScript** - Type-safe development
@@ -14,6 +14,7 @@ A modern chat interface template built with AI SDK and customizable UI component
 ## Features
 
 - 🤖 **AI Chat Interface** - Complete chat UI with streaming responses
+- 🔗 **ACP Support** - Connect to any Agent Client Protocol compatible agent like Gemini CLI, Claude Code, or Codex CLI
 - 🎨 **Beautiful Components** - Pre-built AI Elements components
 - 🔧 **Configurable** - Easy to customize and extend
 - 🌙 **Dark Mode** - Built-in theme switching
@@ -39,9 +40,24 @@ pnpm build
 2. Select your preferred model from the dropdown
 3. Start chatting with the AI assistant
 
+## ACP Agent
+
+The ACP ([Agent Client Protocol](https://agentclientprotocol.com)) is a standardized protocol for communication between AI agents and client applications.
+
+### How to Access
+
+Navigate to `/acp` in your browser to access the ACP agent interface.
+
+### What It Does
+
+- Implements the Agent Client Protocol specification for standardized AI agent communication
+- Provides a dedicated interface for protocol-compliant agent interactions
+- Uses AI SDK with [acp-ai-provider](https://github.com/mcpc-tech/mcpc/tree/main/packages/acp-ai-provider) to enable seamless integration with ACP-compatible AI agents on the web platform using `streamText` and `useChat`
+
 ## Components
 
 This template includes reusable AI-focused components:
+
 - Conversation interface with scrolling
 - Message rendering with syntax highlighting
 - Model selection dropdown
