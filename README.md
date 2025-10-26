@@ -1,6 +1,6 @@
 # AI Elements Remix Template
 
-A modern chat interface template built with AI SDK and customizable UI components.
+A modern chat interface template built with AI SDK and AI Elements.
 
 ## Tech Stack
 
@@ -18,7 +18,7 @@ A modern chat interface template built with AI SDK and customizable UI component
 
   ![acp demo](./docs/acp-demo.gif)
 
-- 🎨 **Beautiful Components** - Pre-built AI Elements components
+- 🎨 **AI Elements** - Uses [Vercel AI SDK Elements](https://ai-sdk.dev/elements/overview) for building AI-powered interfaces
 - 🔧 **Configurable** - Easy to customize and extend
 - 🌙 **Dark Mode** - Built-in theme switching
 - 📱 **Responsive** - Mobile-first design
@@ -37,13 +37,13 @@ pnpm dev
 pnpm build
 ```
 
-## Usage
+## Usage of Vercel Gateway Playground
 
 1. Click the settings icon to configure your AI Gateway API Key
 2. Select your preferred model from the dropdown
 3. Start chatting with the AI assistant
 
-## ACP Agent
+## Usage of the ACP Web Client
 
 The ACP ([Agent Client Protocol](https://agentclientprotocol.com)) is a standardized protocol for communication between AI agents and client applications.
 
@@ -54,15 +54,4 @@ Navigate to `/acp` in your browser to access the ACP agent interface.
 ### What It Does
 
 - Implements the Agent Client Protocol specification for standardized AI agent communication
-- Provides a dedicated interface for protocol-compliant agent interactions
 - Uses AI SDK with [acp-ai-provider](https://github.com/mcpc-tech/mcpc/tree/main/packages/acp-ai-provider) to enable seamless integration with ACP-compatible AI agents on the web platform using `streamText` and `useChat`
-
-## Components
-
-This template includes reusable AI-focused components:
-
-- Conversation interface with scrolling
-- Message rendering with syntax highlighting
-- Model selection dropdown
-- Settings dialog for API configuration
-- Responsive prompt input with toolbar
