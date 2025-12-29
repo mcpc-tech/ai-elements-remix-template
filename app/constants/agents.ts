@@ -41,7 +41,6 @@ export const AVAILABLE_AGENTS: Agent[] = [
     name: "Codex CLI",
     command: "codex-acp",
     env: [{ key: "AI_GATEWAY_API_KEY", required: true }],
-    authMethodId: "custom-model-provider",
     meta: {
       icon: "https://unpkg.com/@lobehub/icons-static-svg@1.73.0/icons/openai.svg",
     },

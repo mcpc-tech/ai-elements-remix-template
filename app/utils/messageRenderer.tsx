@@ -1,6 +1,6 @@
 // Message rendering utilities following KISS principle
 
-import { Response } from "@/components/ai-elements/response";
+import { MessageResponse } from "@/components/ai-elements/message";
 import {
   Reasoning,
   ReasoningContent,
@@ -18,20 +18,17 @@ import { CodeBlock } from "~/components/ai-elements/code-block";
 import {
   Plan,
   PlanHeader,
-  // PlanTitle,
   PlanContent,
   PlanTrigger,
 } from "components/ai-elements/plan";
-import { PlanEntry } from "@agentclientprotocol/sdk";
-import { ProviderAgentDynamicToolInput } from "@mcpc-tech/acp-ai-provider";
+import type { ProviderAgentDynamicToolInput } from "@mcpc-tech/acp-ai-provider";
 
-function isToolPart(
-  part: unknown
-): part is Record<string, unknown> & { type: string; state: string } {
+function isToolPart(part: unknown): part is Record<string, unknown> & {
+  type: string;
+  state: string;
+} {
   const p = part as Record<string, unknown>;
-  return (
-    typeof p.type === "string" && p.type.startsWith("tool-") && "state" in p
-  );
+  return typeof p.type === "string" && p.type.startsWith("tool-") && "state" in p;
 }
 
 export function renderMessagePart(
@@ -41,10 +38,16 @@ export function renderMessagePart(
   isStreaming: boolean,
   metadata?: Record<string, unknown>
 ) {
+  // Render text content
   if (part.type === "text" && part.text) {
-    return <Response key={`${messageId}-${index}`}>{part.text}</Response>;
+    return (
+      <MessageResponse key={`${messageId}-${index}`} className="whitespace-pre-wrap">
+        {part.text as string}
+      </MessageResponse>
+    );
   }
 
+  // Render reasoning/thinking process
   if (part.type === "reasoning") {
     return (
       <Reasoning
@@ -59,14 +62,16 @@ export function renderMessagePart(
   }
 
   // Render plan from message metadata
-  const plan = metadata?.plan as Array<PlanEntry> | undefined;
+  const plan = metadata?.plan as Array<Record<string, unknown>> | undefined;
   if (plan && index === 0) {
     return (
       <div key={`${messageId}-plan`} className="w-full">
         <Plan defaultOpen isStreaming={isStreaming}>
           <PlanHeader className="flex flex-row items-center">
-            <h1 className="text-base">Agent Plan</h1>
-            <PlanTrigger className="mb-2" />
+            <>
+              <h1 className="text-base">Agent Plan</h1>
+              <PlanTrigger className="mb-2" />
+            </>
           </PlanHeader>
           <PlanContent>
             <ul className="space-y-2">
@@ -83,19 +88,25 @@ export function renderMessagePart(
                   >
                     <div className="flex-1">
                       <div
-                        className={`text-sm ${status === "done" ? "line-through text-slate-400" : "text-slate-900 dark:text-slate-100"}`}
+                        className={`text-sm ${status === "done"
+                          ? "line-through text-muted-foreground"
+                          : "text-foreground"
+                          }`}
                       >
                         {content}
                       </div>
                       {priority && (
-                        <div className="mt-1 text-xs text-slate-500">
+                        <div className="mt-1 text-xs text-muted-foreground">
                           Priority: {priority}
                         </div>
                       )}
                     </div>
                     <div className="shrink-0 text-xs">
                       <span
-                        className={`px-2 py-1 rounded-full font-medium text-[10px] uppercase tracking-wide ${status === "pending" ? "bg-yellow-100 text-yellow-800" : "bg-green-100 text-green-800"}`}
+                        className={`px-2 py-1 rounded-full font-medium text-[10px] uppercase tracking-wide ${status === "pending"
+                          ? "bg-muted text-muted-foreground"
+                          : "bg-primary/10 text-primary"
+                          }`}
                       >
                         {status ?? "pending"}
                       </span>
@@ -112,24 +123,58 @@ export function renderMessagePart(
 
   // Handle tool calls with type starting with "tool-"
   if (isToolPart(part)) {
-    const toolInput = part.input as ProviderAgentDynamicToolInput;
-    const toolType = toolInput.toolName as `tool-${string}`;
-    const hasOutput =
-      part.state === "output-available" || part.state === "output-error";
+    const normalizeToolName = (rawName: string) => {
+      let name = rawName;
+
+      // Some providers include prefixes/namespaces that we don't want to show in UI.
+      name = name.replace(/^tool-/, "");
+      name = name.replace(/^mcp__/, "");
+
+      // Strip ACP AI SDK tools branding across common separators.
+      // Examples:
+      // - mcp__acp_ai_sdk_tools__show_alert
+      // - acp-ai-sdk-tools/show_alert
+      name = name.replace(/(^|__|\/)(acp[-_]?ai[-_]?sdk[-_]?tools)(?=__|\/|$)/g, "$1");
+
+      // Normalize repeated separators.
+      name = name.replace(/^__+/, "").replace(/__+$/, "");
+      name = name.replace(/__{3,}/g, "__");
+
+      return name || rawName;
+    };
+    const toolInput = part.input as ProviderAgentDynamicToolInput | undefined;
+
+    // Guard clause: skip rendering if input or toolName is missing
+    if (!toolInput || !toolInput.toolName) {
+      return null;
+    }
+
+    const normalizedToolName = normalizeToolName(toolInput.toolName);
+    const toolType = `tool-${normalizedToolName}` as `tool-${string}`;
+    const toolState = part.state as
+      | "input-streaming"
+      | "input-available"
+      | "output-available"
+      | "output-error";
+    const hasOutput = toolState === "output-available" || toolState === "output-error";
+
+    // Truncate tool title if too long
+    const maxTitleLength = 20;
+    const displayTitle =
+      normalizedToolName.length > maxTitleLength
+        ? `${normalizedToolName.slice(0, maxTitleLength)}...`
+        : normalizedToolName;
 
     return (
       <Tool key={`${messageId}-${index}`} defaultOpen={hasOutput}>
-        <ToolHeader type={toolType} state={part.state} />
+        <ToolHeader title={displayTitle} type={toolType} state={toolState} />
         <ToolContent>
-          {part.input !== undefined && <ToolInput input={part.input} />}
+          {part.input !== undefined && <ToolInput input={toolInput.args} />}
           {hasOutput && (
             <ToolOutput
               output={
                 part.output ? (
-                  <CodeBlock
-                    code={JSON.stringify(part.output, null, 2)}
-                    language="json"
-                  />
+                  <CodeBlock code={JSON.stringify(part.output, null, 2)} language="json" />
                 ) : null
               }
               errorText={part.errorText as string | undefined}

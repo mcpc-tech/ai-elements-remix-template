@@ -60,3 +60,7 @@ export const MessageAvatar = ({
     <AvatarFallback>{name?.slice(0, 2) || 'ME'}</AvatarFallback>
   </Avatar>
 );
+
+// Export MessageResponse as an alias to Response for consistency with dev-inspector-mcp
+export { Response as MessageResponse } from '~/components/ai-elements/response';
+
