@@ -1,6 +1,6 @@
 # AI Elements Remix Template
 
-A modern chat interface template built with AI SDK and AI Elements.
+A modern ACP (Agent Client Protocol) interface template built with AI SDK and AI Elements.
 
 ## Tech Stack
 
@@ -13,16 +13,13 @@ A modern chat interface template built with AI SDK and AI Elements.
 
 ## Features
 
-- 🤖 **AI Chat Interface** - Complete chat UI with streaming responses
-- 🔗 **ACP Support** - Connect to any Agent Client Protocol compatible agent like Gemini CLI, Claude Code, or Codex CLI
-
-  ![acp demo](./docs/acp-demo.gif)
-
+- 🔗 **ACP Support** - Connect to any Agent Client Protocol compatible agent like Claude Code, Gemini CLI, or Codex CLI
+- 🤖 **Standardized Agents** - Built-in configuration for major ACP agents
 - 🎨 **AI Elements** - Uses [Vercel AI SDK Elements](https://ai-sdk.dev/elements/overview) for building AI-powered interfaces
 - 🔧 **Configurable** - Easy to customize and extend
 - 🌙 **Dark Mode** - Built-in theme switching
 - 📱 **Responsive** - Mobile-first design
-- 🔑 **Client-side API Key** - Secure local storage of credentials
+- 🔑 **Local Configuration** - Secure local handling of environment variables
 
 ## Getting Started
 
@@ -37,21 +34,10 @@ pnpm dev
 pnpm build
 ```
 
-## Usage of Vercel Gateway Playground
+## Usage
 
-1. Click the settings icon to configure your AI Gateway API Key
-2. Select your preferred model from the dropdown
-3. Start chatting with the AI assistant
+1. Select your preferred agent from the dropdown (e.g., Claude Code, Gemini CLI).
+2. Configure any required environment variables (API keys) in the settings dialog.
+3. Start chatting with the agent!
 
-## Usage of the ACP Web Client
-
-The ACP ([Agent Client Protocol](https://agentclientprotocol.com)) is a standardized protocol for communication between AI agents and client applications.
-
-### How to Access
-
-Navigate to `/acp` in your browser to access the ACP agent interface.
-
-### What It Does
-
-- Implements the Agent Client Protocol specification for standardized AI agent communication
-- Uses AI SDK with [acp-ai-provider](https://github.com/mcpc-tech/mcpc/tree/main/packages/acp-ai-provider) to enable seamless integration with ACP-compatible AI agents on the web platform using `streamText` and `useChat`
+The interface uses [ACP (Agent Client Protocol)](https://agentclientprotocol.com) to communicate with agents running locally or remotely.

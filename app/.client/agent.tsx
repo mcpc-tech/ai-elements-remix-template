@@ -25,7 +25,6 @@ import { AVAILABLE_MODELS, DEFAULT_MODEL } from "~/constants/models";
 import {
   ChatTransport,
   convertToModelMessages,
-  stepCountIs,
   streamText,
   tool,
   UIMessage,

@@ -39,7 +39,7 @@ const ACPAgent = () => {
 
   // Get the selected agent object
   const currentAgent =
-    AVAILABLE_AGENTS.find((agent) => agent.command === selectedAgent) ||
+    AVAILABLE_AGENTS.find((agent) => agent.name === selectedAgent) ||
     AVAILABLE_AGENTS[0];
 
   // Prepare agent-scoped env state for the settings dialog
@@ -145,8 +145,8 @@ const ACPAgent = () => {
                 <PromptInputModelSelectContent>
                   {AVAILABLE_AGENTS.map((agentOption) => (
                     <PromptInputModelSelectItem
-                      key={agentOption.command}
-                      value={agentOption.command}
+                      key={agentOption.name}
+                      value={agentOption.name}
                     >
                       {agentOption.name}
                     </PromptInputModelSelectItem>
