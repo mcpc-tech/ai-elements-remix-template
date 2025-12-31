@@ -43,10 +43,13 @@ const ACPAgent = () => {
     AVAILABLE_AGENTS[0];
 
   // Prepare agent-scoped env state for the settings dialog
-  const requiredKeys = currentAgent.env.map((e) => e.key);
+  const allEnvKeys = currentAgent.env.map((e) => e.key);
+  const mandatoryEnvKeys = currentAgent.env
+    .filter((e) => e.required !== false)
+    .map((e) => e.key);
   const { envVars, setEnvVar } = useAgentEnv(
     currentAgent.command,
-    requiredKeys
+    allEnvKeys
   );
 
   const selectedAgentRef = useRef(selectedAgent);
@@ -65,7 +68,9 @@ const ACPAgent = () => {
     e.preventDefault();
     if (input.trim()) {
       // Ensure all required env keys are present
-      const missing = requiredKeys.filter((k) => !(envVars[k] ?? "").trim());
+      const missing = mandatoryEnvKeys.filter(
+        (k) => !(envVars[k] ?? "").trim()
+      );
       if (missing.length) {
         alert(`Please set required keys: ${missing.join(", ")}`);
         return;
@@ -74,7 +79,10 @@ const ACPAgent = () => {
       // Prepare environment variables based on selected agent
       const preparedEnv: Record<string, string> = {};
       currentAgent.env.forEach((envConfig) => {
-        preparedEnv[envConfig.key] = envVars[envConfig.key] ?? "";
+        const value = envVars[envConfig.key];
+        if (value && value.trim()) {
+          preparedEnv[envConfig.key] = value;
+        }
       });
 
       sendMessage(
@@ -155,7 +163,8 @@ const ACPAgent = () => {
               </PromptInputModelSelect>
               <SettingsDialog
                 selectedAgentName={currentAgent.name}
-                requiredKeyNames={requiredKeys}
+                requiredKeyNames={allEnvKeys}
+                mandatoryKeys={mandatoryEnvKeys}
                 values={envVars}
                 onChange={(k, v) => setEnvVar(k, v)}
               />
@@ -163,7 +172,8 @@ const ACPAgent = () => {
             <PromptInputSubmit
               onAbort={stop}
               disabled={
-                !input || requiredKeys.some((k) => !(envVars[k] ?? "").trim())
+                !input ||
+                mandatoryEnvKeys.some((k) => !(envVars[k] ?? "").trim())
               }
               status={status}
             />

@@ -21,6 +21,7 @@ interface SettingsDialogProps {
   onApiKeyChange?: (apiKey: string) => void; // optional for backward compat
   selectedAgentName?: string;
   requiredKeyNames?: string[]; // support multiple env keys
+  mandatoryKeys?: string[]; // keys that MUST be present
   values?: Record<string, string>;
   onChange?: (key: string, value: string) => void;
 }
@@ -30,6 +31,7 @@ export const SettingsDialog: React.FC<SettingsDialogProps> = ({
   onApiKeyChange,
   selectedAgentName = "Agent",
   requiredKeyNames = ["API_KEY"],
+  mandatoryKeys = [],
   values = {},
   onChange,
 }) => {
@@ -75,7 +77,15 @@ export const SettingsDialog: React.FC<SettingsDialogProps> = ({
     setIsOpen(false);
   };
 
-  const hasAnyKey = Object.values(values).some((v) => (v ?? "").trim().length > 0) || apiKey.trim().length > 0;
+  // Determine if the current configuration is valid (sufficient to run)
+  // If mandatoryKeys is provided (even if empty array), use that to check validity.
+  // If not provided (undefined), fallback to checking if "any key is set" (legacy behavior).
+  const isConfigured =
+    mandatoryKeys.length > 0
+      ? mandatoryKeys.every(k => (values[k] ?? "").trim().length > 0)
+      : mandatoryKeys /* passed as empty array implies all optional */
+        ? true
+        : /* legacy fallback */ Object.values(values).some((v) => (v ?? "").trim().length > 0) || apiKey.trim().length > 0;
 
   return (
     <TooltipProvider>
@@ -83,50 +93,50 @@ export const SettingsDialog: React.FC<SettingsDialogProps> = ({
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <TooltipTrigger asChild>
             <DialogTrigger asChild>
-              <Button 
-                variant={hasAnyKey ? "outline" : "destructive"} 
+              <Button
+                variant={isConfigured ? "outline" : "destructive"}
                 size="sm"
-                className={!hasAnyKey ? "animate-pulse" : ""}
+                className={!isConfigured ? "animate-pulse" : ""}
               >
                 <Settings className="h-4 w-4" />
               </Button>
             </DialogTrigger>
           </TooltipTrigger>
           <TooltipContent>
-            <p>{hasAnyKey ? "Settings" : "Set API Key Required"}</p>
+            <p>{isConfigured ? "Settings" : "Set API Key Required"}</p>
           </TooltipContent>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader className="space-y-3">
-          <DialogTitle>Settings - {selectedAgentName}</DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground leading-relaxed">
-            Configure your keys to use the {selectedAgentName} functionality.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          {requiredKeyNames.map((keyName) => (
-            <div key={keyName} className="space-y-2">
-              <Label htmlFor={keyName} className="text-sm font-medium">
-                {keyName}
-              </Label>
-              <Input
-                id={keyName}
-                type="password"
-                value={tempKeys[keyName] ?? ""}
-                onChange={(e) => setTempKeys((s) => ({ ...s, [keyName]: e.target.value }))}
-                className="w-full"
-                placeholder={`Enter your ${keyName}`}
-              />
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader className="space-y-3">
+              <DialogTitle>Settings - {selectedAgentName}</DialogTitle>
+              <DialogDescription className="text-sm text-muted-foreground leading-relaxed">
+                Configure your keys to use the {selectedAgentName} functionality.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              {requiredKeyNames.map((keyName) => (
+                <div key={keyName} className="space-y-2">
+                  <Label htmlFor={keyName} className="text-sm font-medium">
+                    {keyName}
+                  </Label>
+                  <Input
+                    id={keyName}
+                    type="password"
+                    value={tempKeys[keyName] ?? ""}
+                    onChange={(e) => setTempKeys((s) => ({ ...s, [keyName]: e.target.value }))}
+                    className="w-full"
+                    placeholder={`Enter your ${keyName}`}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave}>Save</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            <DialogFooter className="gap-2">
+              <Button variant="outline" onClick={handleCancel}>
+                Cancel
+              </Button>
+              <Button onClick={handleSave}>Save</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </Tooltip>
     </TooltipProvider>
   );
