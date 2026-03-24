@@ -1,6 +1,8 @@
 # AI Elements Remix Template
 
-A modern ACP (Agent Client Protocol) interface template built with AI SDK and AI Elements.
+A web-based ACP (Agent Client Protocol) interface template built with AI SDK and AI Elements.
+
+> Looking for a real, actively maintained ACP project? Check out [DevInspector MCP](https://github.com/mcpc-tech/dev-inspector-mcp) — AI-powered visual debugging for React, Vue, Svelte & Next.js.
 
 ## Tech Stack
 
